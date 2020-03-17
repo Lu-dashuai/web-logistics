@@ -1,0 +1,13 @@
+package com.lightning.dao.makui;
+
+import java.util.List;
+import com.lightning.bean.makui.Users;
+public interface UsersDao {
+	List findUsers();
+	void insertUsers(Users users);
+	void deleteUsers(Users users);
+	List findOneUsers(Users users);
+	void updateUsers(Users users);
+	public boolean frontlogin(Users users);
+	public void updatepass(String pass,String users_id) ;
+}

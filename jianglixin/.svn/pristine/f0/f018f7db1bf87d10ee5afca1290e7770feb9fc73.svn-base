@@ -1,0 +1,41 @@
+package com.lightning.dao.impl.wangjia;
+
+import java.util.List;
+
+import com.lightning.bean.wangjia.Status;
+import com.lightning.dao.base.BaseDao;
+import com.lightning.dao.wangjia.StatusDao;
+
+public class StatusDaoImpl implements StatusDao{
+	//员工状态添加方法
+	@Override
+	public void insertStatus(Status status) {
+		String sql="insert into status(status_id,status_name) values(?,?)";
+		BaseDao.update(sql, new Object[]{status.getStatus_id(),status.getStatus_name()});
+	}
+	//员工状态删除方法		没啥用
+	@Override
+	public int deleteStatus(Status status) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	//修改也没用
+	@Override
+	public void updateStatus(Status status) {
+		// TODO Auto-generated method stub
+		
+	}
+	//没用
+	@Override
+	public List findOneStatus(Status status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//查询所有员工状态
+	@Override
+	public List findStatus() {
+		String sql="select status_id,status_name from status";
+		return BaseDao.query(sql, null);
+	}
+
+}

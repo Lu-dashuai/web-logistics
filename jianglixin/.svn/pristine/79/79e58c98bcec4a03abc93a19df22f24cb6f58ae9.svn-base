@@ -1,0 +1,16 @@
+package com.lightning.dao.wangjia;
+
+import java.util.List;
+
+import com.lightning.bean.wangjia.Allow;
+import com.lightning.bean.wangjia.Post;
+
+public interface AllowDao {
+	void insertAllow(Allow allow);//添加数据
+	int deleteAllow(Allow allow);//删除数据
+	void updateAllow(Allow allow);//修改
+	List findOneAllow(Allow allow);//查找一条数据  为了  修改而使用
+	List findAllow();//查询所有
+	
+	int deleteAllowPower(Allow allow);
+}

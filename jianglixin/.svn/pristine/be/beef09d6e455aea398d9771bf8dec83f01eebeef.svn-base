@@ -1,0 +1,204 @@
+package com.lightning.action.wangzelong;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.Namespace;
+
+import com.alibaba.fastjson.JSON;
+import com.lightning.action.base.BaseAction;
+import com.lightning.bean.wangjia.Worker;
+import com.lightning.bean.wuminghui.Car;
+import com.lightning.bean.wuminghui.Station;
+import com.lightning.bean.wuminghui.Way;
+import com.lightning.bean.yuhaiyang.Comego;
+import com.lightning.bean.yuhaiyang.Comein;
+import com.lightning.bean.yuhaiyang.Indent;
+import com.lightning.dao.impl.wuminghui.CarDaoImpl;
+import com.lightning.dao.impl.wuminghui.StateDaoImpl;
+import com.lightning.dao.impl.wuminghui.StationDaoImpl;
+import com.lightning.dao.impl.wuminghui.WayDaoImpl;
+import com.lightning.dao.impl.yuhaiyang.ComegoDaoImpl;
+import com.lightning.dao.impl.yuhaiyang.ComeinDaoImpl;
+import com.lightning.dao.impl.yuhaiyang.IndentDaoImpl;
+import com.lightning.dao.wuminghui.CarDao;
+import com.lightning.dao.wuminghui.StateDao;
+import com.lightning.dao.wuminghui.StationDao;
+import com.lightning.dao.wuminghui.WayDao;
+import com.lightning.dao.yuhaiyang.ComegoDao;
+import com.lightning.dao.yuhaiyang.ComeinDao;
+import com.lightning.dao.yuhaiyang.IndentDao;
+@Namespace("/Comein")
+public class ComeinAction extends BaseAction{
+	private Way way=new Way();
+	private Car car=new Car();
+	private WayDao waydao=new WayDaoImpl();
+	private CarDao cardao=new CarDaoImpl();
+	private String params;
+	private ComeinDao comeindao=new ComeinDaoImpl();
+	private Comein comein=new Comein();
+	private Comego comego=new Comego();
+	private ComegoDao comegodao=new ComegoDaoImpl();
+	private IndentDao indentdao=new IndentDaoImpl();
+	private Indent indent=new Indent();
+	
+	@Action("findComeinCar")
+	public String findComeinCar() {//查询运来的车辆
+		List<List> tabWay=new ArrayList();
+		Worker worker=(Worker) getSession().get("worker");
+		way.setWay_direction(worker.getWorker_station());
+		tabWay=waydao.findCarOnWay(way);
+		List tabCar=new ArrayList();
+		List tabCarBystation=waydao.findCarOnStation(worker.getWorker_station());
+		Map tabstate=new HashMap();
+		for(int i=0;i<tabCarBystation.size();i++) {
+			tabCar.add(tabCarBystation.get(i));
+		}
+		for(List row:tabWay) {
+			for(Object obj:row) {
+				car.setCar_id((int)obj);
+				tabstate=(Map) cardao.findComeinCar(car).get(0);
+				if(tabstate.get("car_state").equals(1)) {//判断是否为运来的车辆
+					tabCar.add(tabstate);
+				}
+			}
+		}
+		print(JSON.toJSONString(tabCar));
+		return null;
+	}
+	@Action(value="ComeinStation")
+	public String findComeinStation(){//替换网店信息
+		StationDao stationdao=new StationDaoImpl();
+		List tabStation=stationdao.findStation();
+		print(JSON.toJSONString(tabStation));
+		return null;
+	}
+	@Action(value="ComeinState")
+	public String findComeinState() {//替换车信息
+		StateDao statedao=new StateDaoImpl();
+		List tabState=statedao.findState();
+		print(JSON.toJSONString(tabState));
+		return null;
+	}
+	
+	@Action(value="comeinInsert")
+	public String comeinInsert() {//添加入库单据，并修改车辆状态和修改订单入库状态
+		Worker worker=(Worker) getSession().get("worker");
+		way.setWay_direction(worker.getWorker_station());//获取worker中的所属网店
+		String[] str=params.split(",");//获取前台选中的车辆id
+		Date date1 = new Date();   
+	    SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");  
+	    String str1 = sdf1.format(date1); //获取日期格式
+	    List<List> carBelong=cardao.findGohomeCar(worker.getWorker_station());//根据网点获得所有车辆
+	    List count=new ArrayList();
+	    for(List row:carBelong) {
+	    	for(Object obj:row) {
+	    		count.add(obj);
+	    	}
+	    }
+		for(int i=0;i<str.length;i++) {
+			if(count.contains(Integer.parseInt(str[i]))) {
+				car.setCar_id(Integer.parseInt(str[i]));//设置car对象的属性
+				cardao.updateGohomeCar(car);//修改为空闲状态
+				comego.setComego_car(Integer.parseInt(str[i]));//设置comego对象的属性
+				List<List> indents=comegodao.findComeinIndent(comego);//根据获取出库单的车辆id与获得运输中订单id
+				comein.setComein_time(str1);//设置入库单的属性
+				comein.setComein_station(way.getWay_direction());
+				for(List row:indents) {//循环多单订单id
+					for(Object obj:row) {
+						comein.setComein_indent(Integer.parseInt(obj.toString()));
+						comeindao.insertComegoin(comein);//添加入库单
+						indent.setIndent_id(Integer.parseInt(obj.toString()));
+						indentdao.updateComeinIndentSituation(indent);
+					}
+				}
+			}else{
+				car.setCar_id(Integer.parseInt(str[i]));//设置car对象的属性
+				cardao.updateComeinCar(car);//修改为休息状态
+				comego.setComego_car(Integer.parseInt(str[i]));//设置comego对象的属性
+				List<List> indents=comegodao.findComeinIndent(comego);//根据获取出库单的车辆id与获得运输中订单id
+				comein.setComein_time(str1);//设置入库单的属性
+				comein.setComein_station(way.getWay_direction());
+				for(List row:indents) {//循环多单订单id
+					for(Object obj:row) {
+						comein.setComein_indent(Integer.parseInt(obj.toString()));
+						comeindao.insertComegoin(comein);//添加入库单
+						indent.setIndent_id(Integer.parseInt(obj.toString()));
+						indentdao.updateComeinIndentSituation(indent);
+					}
+				}
+			}
+		}
+		print("卸货成功");
+		return null;
+	}
+	
+	
+	
+	public Way getWay() {
+		return way;
+	}
+	public void setWay(Way way) {
+		this.way = way;
+	}
+	public Car getCar() {
+		return car;
+	}
+	public void setCar(Car car) {
+		this.car = car;
+	}
+	public WayDao getWaydao() {
+		return waydao;
+	}
+	public void setWaydao(WayDao waydao) {
+		this.waydao = waydao;
+	}
+	public CarDao getCardao() {
+		return cardao;
+	}
+	public void setCardao(CarDao cardao) {
+		this.cardao = cardao;
+	}
+	public String getParams() {
+		return params;
+	}
+	public void setParams(String params) {
+		this.params = params;
+	}
+	public ComeinDao getComeindao() {
+		return comeindao;
+	}
+	public void setComeindao(ComeinDao comeindao) {
+		this.comeindao = comeindao;
+	}
+	public Comein getComein() {
+		return comein;
+	}
+	public void setComein(Comein comein) {
+		this.comein = comein;
+	}
+	public Comego getComego() {
+		return comego;
+	}
+	public void setComego(Comego comego) {
+		this.comego = comego;
+	}
+	public ComegoDao getComegodao() {
+		return comegodao;
+	}
+	public void setComegodao(ComegoDao comegodao) {
+		this.comegodao = comegodao;
+	}
+	public IndentDao getIndentdao() {
+		return indentdao;
+	}
+	public void setIndentdao(IndentDao indentdao) {
+		this.indentdao = indentdao;
+	}
+	
+}

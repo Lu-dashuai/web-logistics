@@ -1,0 +1,2 @@
+µÇÂ¼url£ºhttp://localhost:8080/web-logistics/admin/login.do
+ÃÜÂë£ºadmin1 ÃÜÂë£º123£¬£¬£¬£¬

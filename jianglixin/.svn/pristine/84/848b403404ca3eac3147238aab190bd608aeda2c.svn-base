@@ -1,0 +1,18 @@
+package com.lightning.dao.wuminghui;
+
+import java.util.List;
+
+import com.lightning.bean.util.Page;
+import com.lightning.bean.wuminghui.Station;
+
+public interface StationDao {
+	void insertStation(Station station);
+	void deleteStation(Station station);
+	void updateStation(Station station);
+	List findStation();
+	List findOneStation(Station station);
+	List findAdminStation();
+	List findCountStation();
+	List findlimitStation(Page page);
+	
+}

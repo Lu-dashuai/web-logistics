@@ -1,0 +1,86 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%>
+<%
+String path = request.getContextPath();
+request.setAttribute("path",path);
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'insertDriver.jsp' starting page</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+	<link rel="stylesheet" type="text/css" href="${path }/css/bootstrap.css"/>
+  </head>
+  <body>
+    <form action="Driver/insertDriver.action" method="post">
+    <table  class="table table-bordered table table-striiped table-striped table-hover">
+    <thead>
+    	<th>司机信息</th>
+    	<th>输入信息</th>
+    </thead>
+    	<tr>
+    		<td>1.驾驶人姓名</td>
+    		<td>
+   				<select required id="Driver" name="driver.driver_worker">
+   				</select>
+   			</td>
+   		</tr>
+   		<tr>
+   			<td>2.车辆信息</td>
+   			<td>
+   				<select required id="CarType" name="driver.driver_car">
+   				</select>
+   			</td>
+    	</tr>
+    </table>
+    	<input type="submit" value="增加一条" class="btn btn-primary btn-lg btn-block">
+    </form>
+  </body>
+</html>
+ <script src="js/jquery-1.8.3.min.js"></script>
+<script>
+//驾驶人姓名下拉框
+$(function(){
+	$.ajax({
+  			url:"Driver/findDriverdriver.action",
+  			type:"post",
+  			dataType:"text",
+  			success:function(tab1){
+  				$("#Driver").empty();
+  				var Drivers=eval("("+tab1+")");
+  				for(var i=0;i<Drivers.length;i++){
+  					var str="<option value='"+Drivers[i][0]+"'>"+Drivers[i][1]+"</option>";
+  					$("#Driver").append(str);
+  				}
+  			}
+  		})
+  	});
+  	//车辆类型下拉框
+$(function(){
+	$.ajax({
+  			url:"Driver/insertAllDriver.action",
+  			type:"post",
+  			dataType:"text",
+  			success:function(tab1){
+  				$("#CarType").empty();
+  				var Drivers=eval("("+tab1+")");
+  				for(var i=0;i<Drivers.length;i++){
+  					var str="<option value='"+Drivers[i][0]+"'>"+Drivers[i][1]+"</option>";
+  					$("#CarType").append(str);
+  				}
+  			}
+  		})
+  	});
+</script>

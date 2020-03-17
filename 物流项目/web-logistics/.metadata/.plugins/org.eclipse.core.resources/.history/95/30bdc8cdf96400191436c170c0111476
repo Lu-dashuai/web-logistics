@@ -1,0 +1,124 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+ul,li{
+	list-style:none;
+	margin:0px;
+	padding:0px;
+}
+table{
+	border-collapse:collapse;
+	border-spacing:0;
+}
+a{
+	text-decoration:none;
+}
+body{
+	font-family: 'Open Sans', sans-serif;
+	background:url(../../images/login/back.jpg)repeat 0px 0px;
+	background-size:cover;
+}
+.header {
+    text-align: center;
+    margin-top: 80px;
+}
+.header h1 {
+    font-size: 50px;
+    color: #fff;
+    font-weight: 400;
+}
+.main-content{
+	width: 30%;
+	margin: 0 auto;
+	margin-top: 30px;
+	text-align: center;
+    background-color: rgba(25, 30, 33, 0.86);
+}
+.register {
+    padding: 1.3em 0;
+}
+.resp-tab-item{
+  border:none;
+  color: #fff;
+  font-size: 1.2em;
+  padding:10px 30px;
+  display: inline-block;
+  outline: none;
+  background: #00b7c9;
+  border-radius: 5px;
+}
+.login-top {
+    padding: 1em 0 0;
+}
+.tab {
+    background: #f99104;
+    padding: 1em 0em 0 0;
+}
+.login-top p {
+    font-size: 1em;
+    color: #F99104;
+    margin-bottom: 0.5em;
+}
+.register input[type="text"] {
+	outline: none;
+    font-size:0.95em;
+	color: #eee;
+    padding: 1em 1em ;
+	border:none;
+	border-radius: 3px;
+	width: 86%;
+	height: 35px;
+    margin: 0 0 15px 0 ;
+	background:rgba(17, 18, 22, 0.68) ;
+	border-radius: 5px;
+}
+.register input[type="password"] {
+	outline: none;
+    font-size:0.95em;
+	color: #eee;
+	padding: 0em 1em ;
+	border:none;
+	border-radius: 5px;
+	width: 86%;
+	height: 35px;
+    margin: 0 0 15px 0 ;
+	background:#fff;
+	background:rgba(17, 18, 22, 0.68);
+}
+.register span{
+	line-height: 40px;
+	display: inline-block;
+	float: left;
+	color: white;
+}
+.sign-up input[type="button"] {
+    background:rgba(0, 183, 201, 0.23);
+    color: #fff;
+	border: none;
+    font-size: 1.3em;
+    padding: 0.4em 1em;
+    width: 85%;
+    cursor: pointer;
+    outline: none;
+    display:block;
+	font-family: 'Cuprum', sans-serif;
+	border-radius: 5px;
+	margin:0 auto;
+	
+}
+.footer {
+    text-align: center;
+	padding:2em 0;
+}
+.footer p {
+    font-size: .9em;
+    color: #fff;
+    margin: 0px;
+}
+.footer p a {
+    color: #fff;
+}
+.footer p a:hover {
+   text-decoration:underline;
+}

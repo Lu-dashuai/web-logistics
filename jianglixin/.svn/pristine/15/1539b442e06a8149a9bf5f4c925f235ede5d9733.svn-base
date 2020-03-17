@@ -1,0 +1,14 @@
+package com.lightning.dao.wangjia;
+
+import java.util.List;
+
+import com.lightning.bean.wangjia.Allow;
+import com.lightning.bean.wangjia.Status;
+
+public interface StatusDao {
+	void insertStatus(Status status);//添加数据
+	int deleteStatus(Status status);//删除数据
+	void updateStatus(Status status);//修改
+	List findOneStatus(Status status);//查找一条数据  为了  修改而使用
+	List findStatus();//查询所有
+}

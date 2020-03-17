@@ -1,0 +1,44 @@
+package com.lightning.dao.impl.wangzelong;
+
+import java.util.List;
+
+import com.lightning.bean.wangzelong.Type;
+import com.lightning.dao.base.BaseDao;
+import com.lightning.dao.wangzelong.TypeDao;
+
+public class TypeDaoImpl implements TypeDao{
+
+	@Override
+	public List findType() {
+		String sql="select type_id,type from type";
+		return BaseDao.query(sql, null);
+	}
+
+	@Override
+	public List findOneType(Type type) {
+		// 查询type表的单一信息
+		String sql="select type_id,type from type where type_id=?";
+		return BaseDao.query(sql,new Object[]{type.getType_id()});
+	}
+
+	@Override
+	public void deleteType(Type type) {
+		// 删除type表的单条数据
+		String sql="delete from type where type_id=?";
+		BaseDao.update(sql, new Object[] {type.getType_id()});
+	}
+
+	@Override
+	public void updateType(Type type) {
+		// 修改type表的单条数据
+		String sql="update type set type=? where type_id=?";
+		BaseDao.update(sql, new Object[] {type.getType(),type.getType_id()});
+	}
+
+	@Override
+	public void insertType(Type type) {
+		String sql="insert into type values(?,?)";
+		BaseDao.update(sql, new Object[]{type.getType_id(),type.getType()});
+	}
+	
+}

@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+tomcat7Server.web-logistics.IEARProjectName=
+tomcat7Server.web-logistics.altContextRoot=
+tomcat7Server.web-logistics.contextRoot=/web-logistics
+tomcat7Server.web-logistics.deployIsOverProject=false
+tomcat7Server.web-logistics.deploymentPath=E\:\\apache-tomcat-7.0.82-windows-x64\\apache-tomcat-7.0.82\\webapps\\web-logistics
+tomcat7Server.web-logistics.isDeployed=true
+tomcat7Server.web-logistics.isExploded=true
+tomcat7Server.web-logistics.isUptoDate=true
+tomcat7Server.web-logistics.noFileCopy=false
+tomcat7Server.web-logistics.shouldBackup=true
+tomcat7Server.web-logistics.shouldOverwrite=false
+tomcat7Server.web-logistics.type=WebDeployment

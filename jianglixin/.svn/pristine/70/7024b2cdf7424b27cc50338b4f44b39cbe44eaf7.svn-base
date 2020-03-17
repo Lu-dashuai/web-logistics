@@ -1,0 +1,37 @@
+package com.lightning.dao.wuminghui;
+
+import java.util.List;
+
+import com.lightning.bean.util.Page;
+import com.lightning.bean.wuminghui.Car;
+
+public interface CarDao {
+	int insertCar(Car car);
+	void deleteCar(Car car);
+	void updateCar(Car car);
+	List findCar();
+	/*List<List> findCarByCode(Object carName);*/
+	List findOneCar(Car car);
+	/**
+	 * @return
+	 */
+	List findCountCar();
+	/**
+	 * @return
+	 */
+	List findlimitCar(Page page);
+	
+	List<List> findCarByCode(String carName);//模糊查询
+	/**
+	 * @param page
+	 * @return
+	 */
+	List findlimitWay(Page page);
+	List findComeinCar(Car car);
+	void updateComeinCar(Car car);
+	
+	//根据所属网点查找车辆id
+	List findGohomeCar(int belong);
+	//修改车辆状态为空闲
+	void updateGohomeCar(Car car);
+}

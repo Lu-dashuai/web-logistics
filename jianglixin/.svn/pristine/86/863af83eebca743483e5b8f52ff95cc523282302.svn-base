@@ -1,0 +1,104 @@
+<jsp:include page="/before/front/top.jsp"></jsp:include>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'insertCargo.jsp' starting page</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+	
+  </head>
+  <body>
+  	<form action="Cargo/insertCargo.action" method="post">
+	    <div class="container" style="border:1px solid;">
+	    	<div class="col-md-12" style="border:1px solid;">
+	    		<table class="table">
+	    			订单号：<input type="text" id="dingdan"> <input id="indents" type="button" value="查询">
+	    		</table>
+    		</div>
+    		<div class="col-md-12" style="border:1px solid; width=:80%;height:300px;">
+    			<table class="table">
+    				<tr>
+    					<td>订单编号</td>
+    					<td>下单时间</td>
+    					<td>订单状态</td>
+    					<td>发车时间</td>
+    					<td>到达时间</td>
+    				</tr>	
+    				<tr id="times">
+    					
+    				</tr>
+    			</table>
+	    	</div>
+	    </div>
+	</form>
+  </body>
+  </html>
+  <script  type="text/javascript">
+  		$("#indents").on('click',function(){
+  			var dingdan=$('#dingdan').val();
+  			$.ajax({
+  				url:"Users/insertIndent.action",
+  				type:"post",
+  				datatype:"json",
+  				data:{"indentid":dingdan},
+  				success:function(str){
+  					$("#times").empty();
+  					var indents=eval("("+str+")");//转换对象
+  					for(var i=0;i<indents.length;i++){
+  						var time= changeDateFormat(indents[i].indent_time);
+  						var star;
+  						var end;
+  						if(indents[i].time_start==null){
+  							star="未发车";
+  						}else{
+  							star=changeDateFormats(indents[i].time_start);
+  						}
+  						if(indents[i].time_end==null){
+  							end="车还在路上";
+  						}else{
+  							end=changeDateFormats(indents[i].time_end);
+  						}
+  						var strs="<td>"+indents[i].indent_id+"</td><td>"+time+"</td><td>"+indents[i].situation_name+"</td><td>"+star+"</td><td>"+end+"</td>"
+  						$("#times").append(strs);
+  					}
+  				}
+  			});
+  		});
+  		function changeDateFormat(cellval) {//改变时间格式
+  			if (cellval != null) {  
+  			    var date = new Date(parseInt(cellval, 10));  
+  			    var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;  
+  			    var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();  
+  			    return date.getFullYear() + "-" + month + "-" + currentDate;  
+  			}  
+  		}  
+  		function changeDateFormats(cellval) {//改变时间格式
+  			if (cellval != null) {  
+  			    var date = new Date(parseInt(cellval, 10));  
+  			    var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;  
+  			    var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate(); 
+  			    var hour = date.getHours();
+  			    var minute = date.getMinutes();
+  			    var second = date.getSeconds();
+  			    return date.getFullYear() + "-" + month + "-" + currentDate +" "+hour+":"+minute+":"+second;  
+  			   
+  			}  
+  		}  
+  </script>
+  
+<jsp:include page="/before/front/fooder.jsp"></jsp:include>

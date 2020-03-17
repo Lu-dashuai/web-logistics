@@ -1,0 +1,13 @@
+package com.lightning.dao.makui;
+
+import java.util.List;
+
+import com.lightning.bean.makui.Company;
+
+public interface CompanyDao {
+	List findCompany();
+	void insertCompany(Company company);
+	void deleteCompany(Company company);
+	List findOneCompany(Company company);
+	void updateCompany(Company company);
+}

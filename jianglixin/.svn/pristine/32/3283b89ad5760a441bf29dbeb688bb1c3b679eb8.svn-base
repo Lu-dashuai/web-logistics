@@ -1,0 +1,158 @@
+package com.lightning.dao.impl.wangjia;
+
+import java.util.List;
+
+import com.lightning.bean.util.Page;
+import com.lightning.bean.wangjia.Worker;
+import com.lightning.dao.base.BaseDao;
+import com.lightning.dao.wangjia.WorkerDao;
+
+
+public class WorkerDaoImpl implements WorkerDao{
+
+	//添加员工信息
+	public int insertWoker(Worker worker) {
+		String sql="insert into worker(worker_id,worker_password,worker_name,worker_idcard,worker_sex,worker_phone,worker_post,worker_station,worker_status) values(?,?,?,?,?,?,?,?,?)";
+		return BaseDao.update(sql, new Object[] {worker.getWorker_id(),worker.getWorker_password(),worker.getWorker_name(),worker.getWorker_idcard(),worker.getWorker_sex(),worker.getWorker_phone(),worker.getWorker_post(),worker.getWorker_station(),worker.getWorker_status()});
+	}
+	//根据员工编号产出一条员工信息
+	@Override
+	public int deleteWorker(Worker worker) {
+		String sql="delete from worker where worker_id=?";
+		return BaseDao.update(sql, new Object[] {worker.getWorker_id()});
+	}
+	//根据员工编号修改一条员工信息
+	@Override
+	public void updateWorker(Worker worker) {
+		String sql="update worker set worker_password=?,worker_name=?,worker_idcard=?,worker_sex=?,worker_phone=?,worker_post=?,worker_station=?,worker_status=? where worker_id=?";
+		BaseDao.update(sql, new Object[] {worker.getWorker_password(),worker.getWorker_name(),worker.getWorker_idcard(),worker.getWorker_sex(),worker.getWorker_phone(),worker.getWorker_post(),worker.getWorker_station(),worker.getWorker_status(),worker.getWorker_id()});
+	}
+	//根据员工编号查询一条员工信息
+	@Override
+	public List findOneWorker(Worker worker) {
+		//String sql="select * from worker where worker_id=?";
+		
+		String sql="select worker_id,worker_password,worker_name,worker_idcard,worker_sex,worker_phone,worker_post,worker_station,worker_status from worker where worker_id = ?";
+		return BaseDao.query(sql, new Object[] {worker.getWorker_id()});
+	}
+	//sql语句直接查询全部员工信息
+	@Override
+	public List findWorker() {
+		String sql="select worker_id,worker_password,worker_name,worker_idcard,worker_sex,worker_phone,post_name,station_name,status_name from worker left join role on worker_id = role_worker left join post on role_post = post_id left join status on worker_status = status_id left join station on worker_station = station_id";
+		//String sql ="select * from worker";
+		return BaseDao.queryMap(sql, null);
+	}
+	
+	
+	
+	//登录验证----------------------
+	public boolean frontlogin(Worker worker) {
+		
+		boolean flag = false;
+		String sql = "select * from worker where worker_id=? and worker_password =? and worker_status!=2";
+		List workerList=BaseDao.query(sql, new Object[] {worker.getWorker_id(),worker.getWorker_password()});
+		if(workerList!=null && workerList.size()>0) {
+			flag=true;
+		}
+		return flag;
+		
+	}
+	//登录验证----------------------
+	
+	//查询司机
+	@Override
+	public List findWorkerId() {
+		// TODO Auto-generated method stub
+		String sql = "select worker.worker_id,worker.worker_name from worker  " + 
+				" left join post on worker.worker_post=post.post_id " + 
+				" where post.post_name=\"司机\"";
+		
+		return BaseDao.query(sql, null);
+	}
+	
+	
+	@Override
+	public List findWorker(Page page,Worker worker) {
+		String sql="select wk.worker_id,wk.worker_name,wk.worker_phone,ps.post_name,wk.worker_station,stu.status_name from worker wk left join post ps on wk.worker_post = ps.post_id left join status stu on stu.status_id=wk.worker_status ";
+		if(worker!=null) {
+			if(worker.getWorker_name()!=null) {
+				sql+=" where wk.worker_name like ?";
+			}
+		}
+		sql +=" limit ?,?";
+		if(worker!=null) {
+			if(worker.getWorker_name()!=null) {
+			return BaseDao.queryMap(sql, new Object[] {"%"+worker.getWorker_name()+"%",page.getStartIndex(),page.getMax()});
+			}
+		}
+		return BaseDao.queryMap(sql, new Object[] {page.getStartIndex(),page.getMax()});
+
+	}
+
+	@Override
+	public int selectCount(Page page, Worker worker) {
+		int count = 0;
+		String sql="select count(*) from worker";
+		if(worker!=null) {
+			if(worker.getWorker_name()!=null) {
+				sql+=" where worker_name like ? ";
+			}
+		}
+		
+		if(worker!=null&&worker.getWorker_name()!=null) {
+			List row=(List) BaseDao.query(sql, new Object[] {worker.getWorker_name()}).get(0);
+			count=Integer.parseInt(row.get(0).toString());
+			return count; 
+		}else {
+			List row=(List) BaseDao.query(sql,null).get(0);
+			count=Integer.parseInt(row.get(0).toString());
+			return count;
+		}
+	}
+
+	//------------------------权限使用它---------------
+	@Override
+	public List checkeddenglu(Worker worker) {
+		String rolepost="select role_post from role where role_worker=?";
+		List<List> rolepostList=BaseDao.query(rolepost, new Object[] {worker.getWorker_id()});
+		int rolepostint=Integer.parseInt(rolepost);
+		String allowpowersize="select allow_power from allow where allow_post= rolepostint";
+		List<List> allowpowersizeList=BaseDao.query(allowpowersize, null);
+		System.out.println(allowpowersizeList);
+		return allowpowersizeList;
+	}
+
+	
+	//------------------------登录验证---------------
+	/**
+	 * 
+	 * 根据用户名ID查询角色   根据 角色查询该用户具有的权限的父菜单ID以及菜单姓名
+	 */
+	/*public List findPost(String username) {
+		String sql="select power.power_id,power.power_type from worker    " + 
+				" left join role on worker.worker_id=role.role_worker " + 
+				" left join post on role.role_post=post.post_id " + 
+				" left join allow on post.post_id=allow.allow_post " + 
+				" left join power on allow.allow_power=power.power_id " + 
+				" where power.power_parent=0 and  worker.worker_id=? ";
+		BaseDao base=new BaseDao();
+		List list=base.queryMap(sql, new Object[] {username.toString()});
+		return list;
+	}*/
+	/**
+	 * 根据父菜单查子菜单信息
+	 */
+	/*public List findPerson(String username,int father) {
+		List fatherlist=findPost(username);
+		
+		String sql="select power.power_id,power.power_type from worker  " + 
+				" left join role on worker.worker_id=role.role_worker " + 
+				" left join post on role.role_post=post.post_id " + 
+				" left join allow on post.post_id=allow.allow_post " + 
+				" left join power on allow.allow_power=power.power_id " + 
+				" where power.power_parent=?  and worker.worker_id=?";
+		BaseDao base=new BaseDao();
+		List list=base.queryMap(sql, new Object[] {username,father});
+		return list;
+	}*/
+}
